@@ -1,0 +1,308 @@
+:root {
+  --toss-blue: #3182f6;
+  --toss-red: #f04452;
+  --toss-red-bg: #feebee;
+  --toss-blue-bg: #e8f3ff;
+  --grey-900: #191f28;
+  --grey-800: #333d4b;
+  --grey-700: #4e5968;
+  --grey-600: #8b95a1;
+  --grey-500: #b0b8c1;
+  --grey-300: #d1d6db;
+  --grey-200: #e5e8eb;
+  --grey-100: #f2f4f6;
+  --grey-50: #f9fafb;
+  --white: #ffffff;
+  --font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--grey-50);
+  color: var(--grey-900);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  background-color: var(--grey-50);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Top Bar */
+.top-app-bar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: var(--grey-50);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-700);
+  border-radius: 50%;
+}
+
+.icon-btn:active {
+  background-color: var(--grey-200);
+}
+
+/* Candle chart progress indicators */
+.candle-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candle-bar {
+  width: 18px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.candle-wick {
+  width: 2px;
+  height: 24px;
+  background-color: var(--grey-300);
+  position: absolute;
+}
+
+.candle-body {
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  background-color: var(--grey-300);
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.candle-bar.active .candle-body {
+  background-color: var(--toss-red);
+  box-shadow: 0 0 8px rgba(240, 68, 82, 0.4);
+}
+.candle-bar.active .candle-wick {
+  background-color: var(--toss-red);
+}
+
+.candle-bar.done .candle-body {
+  background-color: var(--toss-blue);
+}
+.candle-bar.done .candle-wick {
+  background-color: var(--toss-blue);
+}
+
+/* Option Card */
+.stock-option-card {
+  width: 100%;
+  background-color: var(--white);
+  border: 1.5px solid var(--grey-200);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  text-align: left;
+}
+
+.stock-option-card:active {
+  transform: scale(0.985);
+}
+
+.stock-option-card.selected-red {
+  border-color: var(--toss-red);
+  background-color: #fff6f7;
+}
+
+.stock-option-card.selected-blue {
+  border-color: var(--toss-blue);
+  background-color: #f4f8fe;
+}
+
+.chip-key {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: var(--grey-100);
+  color: var(--grey-700);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Tier Card */
+.tier-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdfe 100%);
+  border: 1.5px solid #191f28;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.tier-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #f04452 0%, #ff6b4a 100%);
+}
+
+/* Stock deep link card */
+.stock-deeplink-card {
+  background-color: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.stock-deeplink-card:active {
+  background-color: var(--grey-100);
+  transform: scale(0.99);
+}
+
+/* Bottom CTA */
+.bottom-cta-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.bottom-cta-container {
+  width: 100%;
+  max-width: 440px;
+  padding: 12px 20px calc(var(--safe-bottom) + 12px);
+  background: linear-gradient(180deg, rgba(249, 250, 251, 0) 0%, rgba(249, 250, 251, 0.95) 25%, #f9fafb 100%);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-stock-red {
+  width: 100%;
+  height: 56px;
+  background-color: var(--toss-red);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn-stock-red:active {
+  opacity: 0.9;
+  transform: scale(0.985);
+}
+
+.btn-stock-dark {
+  width: 100%;
+  height: 56px;
+  background-color: var(--grey-900);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.btn-stock-dark:active {
+  background-color: #000;
+}
+
+.btn-ghost {
+  width: 100%;
+  height: 44px;
+  background: transparent;
+  color: var(--grey-600);
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-ghost:active {
+  color: var(--grey-900);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,71 @@
+name: Verification Pipeline & Build CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify-and-build:
+    name: 4-Step Verification Ladder (SpaceX/GrokBot Protocol)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.28.5
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Step 1. Static Type Verification (tsc)
+        run: pnpm tsc --noEmit
+
+      - name: Step 2. Production Bundle Build (vite)
+        run: pnpm run build
+
+      - name: Step 3. Comprehensive Unit Test Suite (vitest)
+        run: pnpm test
+
+      - name: Install Google Chrome for Headless CDP Smoke Tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Step 4. Headless Chrome CDP Runtime Smoke Verification
+        run: pnpm run test:smoke
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+
+      - name: Upload Verification Proof Artifacts (Screenshots)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-proof-screenshots
+          path: |
+            lobby-reset-smoke.png
+            chart-result-smoke.png
+            dart-timer-smoke.png
+            roadmap-fee-tooltip-smoke.png
+            course-finance-smoke.png
+            certificate-download-smoke.png
+            promotion-celebration-smoke.png
+          retention-days: 14
