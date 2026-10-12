@@ -85,9 +85,12 @@ async function main() {
           res.on('end', () => resolve(JSON.parse(body)));
         }).on('error', reject);
       });
-      if (data && data[0] && data[0].webSocketDebuggerUrl) {
-        pageWsUrl = data[0].webSocketDebuggerUrl;
-        break;
+      if (Array.isArray(data)) {
+        const pageTarget = data.find((t) => t.type === 'page') || data[0];
+        if (pageTarget && pageTarget.webSocketDebuggerUrl) {
+          pageWsUrl = pageTarget.webSocketDebuggerUrl;
+          break;
+        }
       }
     } catch {
       await new Promise((r) => setTimeout(r, 200));
