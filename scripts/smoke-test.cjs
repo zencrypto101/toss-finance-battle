@@ -377,6 +377,55 @@ async function main() {
   });
   const certInfo = certEval?.result?.value || { hasDownloadBtn: false };
 
+  // --- Step 4.7: Verify BATTLE_VIEW & 1:1 Match Simulation ---
+  console.log('Testing BATTLE_VIEW view & match simulation...');
+  await sendCommand('Runtime.evaluate', {
+    expression: 'window.__SET_VIEW__("BATTLE_VIEW")'
+  });
+  await new Promise((r) => setTimeout(r, 400));
+
+  const battleEval = await sendCommand('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const arena = document.querySelector('[data-testid="battle-arena-card"]');
+        const simBtn = document.querySelector('button[data-testid="simulate-battle-btn"]');
+        const userReturn = document.querySelector('[data-testid="user-live-return"]');
+        const oppReturn = document.querySelector('[data-testid="opponent-live-return"]');
+        return {
+          hasArena: !!arena,
+          hasSimBtn: !!simBtn,
+          userReturnText: userReturn ? userReturn.innerText : '',
+          oppReturnText: oppReturn ? oppReturn.innerText : ''
+        };
+      })()
+    `,
+    returnByValue: true,
+  });
+  const battleInfo = battleEval?.result?.value || { hasArena: false, hasSimBtn: false };
+
+  // Trigger simulate battle
+  console.log('Clicking "맞짱 배틀 시뮬레이션 가동" button...');
+  await sendCommand('Runtime.evaluate', {
+    expression: 'document.querySelector(\'button[data-testid="simulate-battle-btn"]\')?.click()'
+  });
+  // Wait for 5 ticks animation (450ms * 5 ~ 2500ms)
+  await new Promise((r) => setTimeout(r, 2600));
+
+  // Check outcome modal
+  const outcomeEval = await sendCommand('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const modal = document.querySelector('[data-testid="battle-outcome-modal"]');
+        return {
+          hasModal: !!modal,
+          modalText: modal ? modal.innerText : ''
+        };
+      })()
+    `,
+    returnByValue: true,
+  });
+  const outcomeInfo = outcomeEval?.result?.value || { hasModal: false };
+
   // Finish interactive CDP session cleanly
   ws.close();
   try { chrome.kill('SIGKILL'); } catch (e) {}
@@ -494,6 +543,22 @@ async function main() {
   try { fs.rmSync(shotTmpCeleb, { recursive: true, force: true }); } catch (e) {}
   console.log('Saved promotion-celebration-smoke.png');
 
+  console.log('Capturing pvp-battle-smoke.png...');
+  const shotTmpPvp = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-shot-pvp-'));
+  const shotPvpProc = spawn(chromeExe, [
+    '--headless=new',
+    '--disable-gpu',
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
+    '--user-data-dir=' + shotTmpPvp,
+    '--window-size=420,800',
+    '--screenshot=' + path.resolve(__dirname, '../pvp-battle-smoke.png'),
+    `http://127.0.0.1:${port}/?view=BATTLE_VIEW`
+  ], { stdio: 'ignore' });
+  await new Promise((resolve) => shotPvpProc.on('close', resolve));
+  try { fs.rmSync(shotTmpPvp, { recursive: true, force: true }); } catch (e) {}
+  console.log('Saved pvp-battle-smoke.png');
+
   cleanup();
 
   console.log('\n=== SMOKE TEST RUNTIME PROOF REPORT ===');
@@ -513,6 +578,8 @@ async function main() {
   console.log('• ROADMAP Fee Tooltip Rendered:', tooltipInfo.hasTooltip);
   console.log('• COURSE_FINANCE Gem Button Exists:', financeInfo.hasGemBtn);
   console.log('• CERTIFICATE Download Button Exists:', certInfo.hasDownloadBtn);
+  console.log('• BATTLE_VIEW Arena Exists:', battleInfo.hasArena);
+  console.log('• BATTLE Outcome Modal Triggered:', outcomeInfo.hasModal);
   console.log('• Console Errors Count:', consoleErrors.length);
 
   if (consoleErrors.length > 0) {
@@ -545,7 +612,12 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('✅ Step 4 Runtime Proof PASSED: 0 console errors, all Sprint 1 & Sprint 2 tasks verified in runtime.');
+  if (!battleInfo.hasArena || !outcomeInfo.hasModal) {
+    console.error('❌ Battle view arena or outcome modal verification failed!');
+    process.exit(1);
+  }
+
+  console.log('✅ Step 4 Runtime Proof PASSED: 0 console errors, PvP battle arena and outcome modal verified.');
   process.exit(0);
 }
 

@@ -64,4 +64,5 @@ jobs:
             course-finance-smoke.png
             certificate-download-smoke.png
             promotion-celebration-smoke.png
+            pvp-battle-smoke.png
           retention-days: 14

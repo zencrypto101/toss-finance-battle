@@ -38,6 +38,7 @@ toss-finance-battle/
 │   ├── CourseFinancials.tsx     # 재무제표 옥석 가리기 훈련 UI
 │   ├── RankRoadmap.tsx          # 계급 로드맵, EXP 티어 세그먼트, 영웅 카드
 │   ├── Certificate.tsx          # 수료 임관장 및 계급증 캔버스/DOM 카드
+│   ├── BattleView.tsx           # 1:1 맞짱 배틀 실시간 수익률 궤적 시뮬레이션 및 승패 팝업
 │   ├── data.ts                  # 과거 주가 시나리오(SCENARIOS), 공시 DB, 평가 로직
 │   ├── types.ts                 # View, Scenario, Progress, TradeAction 등 타입 정의
 │   ├── utils/
@@ -48,6 +49,7 @@ toss-finance-battle/
 │   │   ├── financeUtils.ts      # 3개년 재무제표 텐배거 비교 분석 및 점수 산출 엔진
 │   │   ├── certificateUtils.ts  # HTML5 Canvas 임관장 그래픽 합성 및 이미지 다운로드 유틸
 │   │   ├── gameEngine.ts        # 3과목 완수 상태 머신, 가중치 종합 점수, 사령관 승급 판정
+│   │   ├── battleUtils.ts       # 1:1 PvP 라이벌 궤적 생성, 승패 판정, 경험치 정산 알고리즘
 │   │   └── __tests__/
 │   │       ├── rankUtils.test.ts # 계급 및 수수료 할인 단위 테스트 슈트 (Vitest)
 │   │       ├── shareUtils.test.ts# 공유 및 클립보드 단위 테스트 슈트 (Vitest)
@@ -55,7 +57,8 @@ toss-finance-battle/
 │   │       ├── timerUtils.test.ts # 10초 타이머 게이지 단위 테스트 슈트 (Vitest)
 │   │       ├── financeUtils.test.ts# 텐배거 재무 분석 알고리즘 단위 테스트 슈트 (Vitest)
 │   │       ├── certificateUtils.test.ts# 임관장 캔버스 합성 단위 테스트 슈트 (Vitest)
-│   │       └── gameEngine.test.ts # 종합 승급 판정 엔진 단위 테스트 슈트 (Vitest)
+│   │       ├── gameEngine.test.ts # 종합 승급 판정 엔진 단위 테스트 슈트 (Vitest)
+│   │       └── battleUtils.test.ts# 1:1 배틀 시뮬레이션 및 승패 판정 단위 테스트 슈트 (Vitest)
 │   ├── main.tsx                 # React 루트 마운트
 │   └── index.css                # 테일윈드/토스 스타일 토큰 및 애니메이션
 ├── scripts/
@@ -118,6 +121,15 @@ toss-finance-battle/
 ### 종합 승급 축하 모달 (`PROMOTION_CELEBRATION`)
 - **축하 모달 컨테이너**: `div[data-testid="promotion-celebration-modal"]`
 - **임관장 이동 CTA 버튼**: `button[data-testid="close-celebration-btn"]`
+
+### 1:1 맞짱 배틀 화면 (`BATTLE_VIEW`)
+- **로비 배틀 진입 버튼**: `button[data-testid="start-pvp-battle-btn"]`
+- **배틀 아레나 카드**: `div[data-testid="battle-arena-card"]`
+- **실시간 수익률 표시**: `[data-testid="user-live-return"]`, `[data-testid="opponent-live-return"]`
+- **시뮬레이션 시작 버튼**: `button[data-testid="simulate-battle-btn"]`
+- **최종 승패 결과 모달**: `div[data-testid="battle-outcome-modal"]`
+- **리매치 버튼**: `button[data-testid="battle-rematch-btn"]`
+- **배틀 종료/로비 복귀 버튼**: `button[data-testid="battle-lobby-btn"]`
 
 ---
 

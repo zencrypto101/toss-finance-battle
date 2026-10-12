@@ -20,6 +20,7 @@ import { CourseDart } from './CourseDart';
 import { CourseFinancials } from './CourseFinancials';
 import { Certificate } from './Certificate';
 import { RankRoadmap } from './RankRoadmap';
+import { BattleView } from './BattleView';
 import {
   generateChartResultShareUrl,
   generateChartResultShareText,
@@ -209,6 +210,8 @@ export default function App() {
       setView('COURSE_FINANCE');
     } else if (viewParam === 'CERTIFICATE') {
       setView('CERTIFICATE');
+    } else if (viewParam === 'BATTLE_VIEW') {
+      setView('BATTLE_VIEW');
     }
 
     if (viewParam === 'CHART_RESULT') {
@@ -721,6 +724,36 @@ export default function App() {
                 <ChevronRight size={18} color="#8b95a1" />
               </div>
             </div>
+
+            {/* 1:1 PvP Match Battle CTA Button */}
+            <button
+              type="button"
+              data-testid="start-pvp-battle-btn"
+              onClick={() => {
+                triggerHaptic('medium');
+                setView('BATTLE_VIEW');
+              }}
+              style={{
+                width: '100%',
+                backgroundColor: '#191f28',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 16,
+                padding: '14px 16px',
+                fontSize: 15,
+                fontWeight: 900,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                boxShadow: '0 4px 14px rgba(25, 31, 40, 0.25)',
+                cursor: 'pointer',
+                marginBottom: 10,
+              }}
+            >
+              <Swords size={18} color="#f04452" />
+              1:1 실시간 맞짱 배틀 (라이벌 대결)
+            </button>
 
             {/* View Certificate CTA Button */}
             <button
@@ -1424,43 +1457,13 @@ export default function App() {
         )}
 
         {/* VIEW 7: BATTLE MIRROR VIEW */}
-        {view === 'BATTLE_VIEW' && battleHost && (
-          <div className="fade-in" style={{ paddingTop: 14 }}>
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <span style={{ backgroundColor: '#f04452', color: '#fff', fontSize: 12, fontWeight: 900, padding: '4px 10px', borderRadius: 8 }}>
-                1:1 RANK BATTLE
-              </span>
-              <h2 style={{ fontSize: 22, fontWeight: 900, color: '#191f28', marginTop: 8 }}>
-                사관학교 계급 서열 맞짱
-              </h2>
-            </div>
-
-            <div style={{ backgroundColor: '#ffffff', border: '1.5px solid #191f28', borderRadius: 20, padding: 18, marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ flex: 1, backgroundColor: '#f9fafb', borderRadius: 14, padding: 14, textAlign: 'center' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#8b95a1' }}>도발자</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#191f28' }}>{battleHost.hostName}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#f04452', marginTop: 4 }}>{battleHost.hostScore}점</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#4e5968', marginTop: 2 }}>{battleHost.hostRank}</div>
-                </div>
-
-                <div style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: '#191f28', color: '#fff', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  VS
-                </div>
-
-                <div style={{ flex: 1, backgroundColor: '#f9fafb', borderRadius: 14, padding: 14, textAlign: 'center' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#8b95a1' }}>나</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#191f28' }}>생도</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#3182f6', marginTop: 4 }}>{certificate.totalScore}점</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#4e5968', marginTop: 2 }}>{certificate.rankTitle}</div>
-                </div>
-              </div>
-            </div>
-
-            <button type="button" className="btn-stock-red" onClick={() => setView('LOBBY')}>
-              사관학교 입교하고 계급 뒤집기
-            </button>
-          </div>
+        {view === 'BATTLE_VIEW' && (
+          <BattleView
+            userReturn={lastChartResult?.totalReturnRate ?? 35.0}
+            userRankTitle={`Lv.${userProgress.level} ${userProgress.rankTitle}`}
+            onBack={() => setView('LOBBY')}
+            onExpChange={(amount) => addExp(amount)}
+          />
         )}
       </main>
     </div>
